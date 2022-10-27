@@ -1,4 +1,4 @@
-# Rigid ENV
+# Rigid ENV (alpha)
 
 A no-dependency Go package that allows safe .env files loading.
 
@@ -17,15 +17,16 @@ import (
 
 type Environment struct {
 	ENV         string
-	TARGET_PROD string
+	TARGET_PROD *string // this value is optional
 	TARGET_DEV  string
-	VERSION     int
+	VERSION     int // this value will be forcefully parsed to int
 }
 
 func main() {
     var environment Environment
 
-    if err := env.Load(&environment, ".env"); err != nil {
+    files := []string{".env"}
+    if err := env.Load(&environment, files...); err != nil {
         panic(err)
     }
 
@@ -43,10 +44,11 @@ The parser will handle:
 -   blank lines
 -   comments that start in the beginning of the line (with hash)
 -   type casting
+-   setting os package's env variables
 
 The parser won't handle:
 
--   comments after assignment
+-   comments after preceding assignment in the same line
 -   non-standard variable names
 
 ## License
